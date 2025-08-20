@@ -1,4 +1,6 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { Api } from './core/services/api';
+import { IEvent } from './core/interfaces/event.interface';
 
 @Component({
   selector: 'app-root',
@@ -6,6 +8,13 @@ import { Component, signal } from '@angular/core';
   standalone: false,
   styleUrl: './app.scss'
 })
-export class App {
-  protected readonly title = signal('test-task');
+export class App implements OnInit {
+  public events: IEvent[] = [];
+
+  constructor(private api: Api) {
+  }
+
+  ngOnInit() {
+    this.api.getEvents().subscribe((events: IEvent[]) => this.events = events);
+  }
 }
