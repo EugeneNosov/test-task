@@ -8,49 +8,59 @@
             <div formArrayName="steps">
                 @for (step of formSteps.controls; track step; let stepIndex = $index) {
                     @let eventElement = formSteps.at(stepIndex).get('event');
-                    @let propertyElement = formSteps.at(stepIndex).get('property');
 
                     <span>{{ stepIndex + 1 }} Step: {{ eventElement?.value ?? 'Unnamed step' }}</span>
                     <div class="filter-selectors" [formGroupName]="stepIndex">
                         <app-custom-select placeholder="Select an event" formControlName="event"
                                            [options]="getEvents()"></app-custom-select>
-                        @if (eventElement?.value && propertyElement?.disabled) {
-                            <button type="button" (click)="showProperty(stepIndex)">
-                                +Add an event attribute
-                            </button>
-                        }
 
-                        <div>
-                            @if (propertyElement?.enabled) {
-                                <app-custom-select
-                                        placeholder="Select an attribute"
-                                        [searchTag]="eventElement?.value"
-                                        formControlName="property"
-                                        [options]="getProperties(eventElement?.value)">
-                                </app-custom-select>
 
-                                <app-custom-select
-                                        placeholder="Operators"
-                                        variant="operator"
-                                        formControlName="operators"
-                                        [operatorOptions]="operatorOptions">
-                                </app-custom-select>
+                        <div class="filter-selectors-properties" formArrayName="properties">
+                            @for (propGroup of propertiesAt(stepIndex).controls; track propGroup; let
+                                propIndex = $index) {
+                                @let propertyCtrl = propGroup.get('property');
+                                <div [formGroupName]="propIndex">
+                                    @if (eventElement?.value && propertyCtrl?.disabled) {
+                                        <button type="button" (click)="showProperty(stepIndex, propIndex)">
+                                            +Add an event attribute
+                                        </button>
+                                    }
+                                    @if (propertyCtrl?.enabled) {
+                                        <app-custom-select
+                                                placeholder="Select an attribute"
+                                                [searchTag]="eventElement?.value"
+                                                formControlName="property"
+                                                [options]="getProperties(eventElement?.value)">
+                                        </app-custom-select>
+                                        @if (propGroup.get('property')?.value) {
+                                            <app-custom-select
+                                                    placeholder="Operators"
+                                                    variant="operator"
+                                                    formControlName="operators"
+                                                    [operatorOptions]="operatorOptions">
+                                            </app-custom-select>
 
-                                @let operatorElement = formSteps.at(stepIndex).get('operators');
-                                @let operatorString = operatorOptions.stringTab.includes(operatorElement?.value);
+                                            @let operatorElement = propGroup.get('operators');
+                                            @let
+                                            operatorString = operatorOptions.stringTab.includes(operatorElement?.value);
 
-                                @if (operatorString) {
-                                    <input type="text" formControlName="operatorStringValue">
-                                } @else {
-                                    <input type="number" formControlName="operatorStartValue">
-                                }
-                                @if (operatorElement?.value === 'in between') {
-                                    <span>and</span>
-                                    <input type="number" formControlName="operatorEndValue">
-                                }
+                                            @if (operatorString) {
+                                                <input type="text" formControlName="operatorStringValue">
+                                            } @else {
+                                                <input type="number" formControlName="operatorStartValue">
+                                            }
+                                            @if (operatorElement?.value === 'in between') {
+                                                <span>and</span>
+                                                <input type="number" formControlName="operatorEndValue">
+                                            }
+                                        }
+                                    }
+                                </div>
+                            }
+                            @if (propertiesAt(stepIndex).at(0).get('property')?.value) {
+                                <button (click)="addPropertyRow(stepIndex)">Refine more</button>
                             }
                         </div>
-
                     </div>
                 }
             </div>

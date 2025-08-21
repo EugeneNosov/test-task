@@ -13,3 +13,9 @@
 .filter-selectors {
   display: flex;
 }
+
+.filter-selectors-properties {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+}

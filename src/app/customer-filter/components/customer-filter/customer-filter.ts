@@ -45,13 +45,25 @@ export class CustomerFilter implements OnInit {
   public addNewStep(): void {
     const newStep = this.formBuilder.group({
       event: this.formBuilder.control<string | null>(null),
-      property: this.formBuilder.control<string | null>({ value: null, disabled: true }),
+      properties: this.formBuilder.array([
+        this.addNewProperty()
+      ]),
+    })
+    this.formSteps.push(newStep);
+  }
+
+  public addNewProperty(): any {
+    return this.formBuilder.group({
+      property: this.formBuilder.control<string | null>({value: null, disabled: true}),
       operators: this.formBuilder.control<string | null>(null),
       operatorStringValue: this.formBuilder.control<string | null>(null),
       operatorStartValue: this.formBuilder.control<number>(0),
       operatorEndValue: this.formBuilder.control<number>(0),
-    })
-    this.formSteps.push(newStep);
+    });
+  }
+
+  public propertiesAt(index: number): FormArray<FormGroup> {
+    return this.formSteps.at(index).get('properties') as FormArray<FormGroup>;
   }
 
   public getEvents(): string[] {
@@ -62,9 +74,13 @@ export class CustomerFilter implements OnInit {
     return this.propertyByEvent.get(eventType)?.map((item: IEventProperty) => item.property);
   }
 
-  public showProperty(i: number) {
-    const prop = this.formSteps.at(i).get('property');
-    prop?.enable({ emitEvent: false });
+  public showProperty(i: number, propIndex: number) {
+    const prop = (this.formSteps.at(i).get('properties') as FormArray<FormGroup>).at(propIndex).get('property');
+    prop?.enable({emitEvent: false});
+  }
+
+  public addPropertyRow(i: number): void {
+    (this.formSteps.at(i).get('properties') as FormArray<FormGroup>).push(this.addNewProperty());
   }
 
   public discardFilters(): void {

@@ -29,7 +29,7 @@ export class CustomSelect implements ControlValueAccessor, OnInit {
   private host = inject(ElementRef<HTMLElement>);
 
   @Input() variant: 'default' | 'operator' = 'default';
-  @Input() tab: 'string' | 'number' | null = null;
+  @Input() tab: 'string' | 'number' | null = 'string';
   @Input() searchTag!: string;
   @Input() options: ReadonlyArray<string> = [];
   @Input() operatorOptions!: IOperatorOption;
@@ -44,6 +44,9 @@ export class CustomSelect implements ControlValueAccessor, OnInit {
 
   ngOnInit() {
     this.recalculateOptions();
+    if (this.variant !== 'default') {
+      queueMicrotask(() => this.choose(this.options[0]))
+    }
   }
 
   public choose(opt: string): void {
