@@ -11,22 +11,45 @@
                     @let propertyElement = formSteps.at(stepIndex).get('property');
 
                     <span>{{ stepIndex + 1 }} Step: {{ eventElement?.value ?? 'Unnamed step' }}</span>
-                    <div [formGroupName]="stepIndex">
-                        <app-custom-select placeholder="Select an event" formControlName="event" [options]="getEvents()"></app-custom-select>
+                    <div class="filter-selectors" [formGroupName]="stepIndex">
+                        <app-custom-select placeholder="Select an event" formControlName="event"
+                                           [options]="getEvents()"></app-custom-select>
                         @if (eventElement?.value && propertyElement?.disabled) {
                             <button type="button" (click)="showProperty(stepIndex)">
                                 +Add an event attribute
                             </button>
                         }
 
-                        @if (propertyElement?.enabled) {
-                            <app-custom-select
-                                    placeholder="Select an attribute"
-                                    [searchTag]="eventElement?.value"
-                                    formControlName="property"
-                                    [options]="getProperties(eventElement?.value)">
-                            </app-custom-select>
-                        }
+                        <div>
+                            @if (propertyElement?.enabled) {
+                                <app-custom-select
+                                        placeholder="Select an attribute"
+                                        [searchTag]="eventElement?.value"
+                                        formControlName="property"
+                                        [options]="getProperties(eventElement?.value)">
+                                </app-custom-select>
+
+                                <app-custom-select
+                                        placeholder="Operators"
+                                        variant="operator"
+                                        formControlName="operators"
+                                        [operatorOptions]="operatorOptions">
+                                </app-custom-select>
+
+                                @let operatorElement = formSteps.at(stepIndex).get('operators');
+                                @let operatorString = operatorOptions.stringTab.includes(operatorElement?.value);
+
+                                @if (operatorString) {
+                                    <input type="text" formControlName="operatorStringValue">
+                                } @else {
+                                    <input type="number" formControlName="operatorStartValue">
+                                }
+                                @if (operatorElement?.value === 'in between') {
+                                    <span>and</span>
+                                    <input type="number" formControlName="operatorEndValue">
+                                }
+                            }
+                        </div>
 
                     </div>
                 }
@@ -35,6 +58,6 @@
         </form>
     </div>
     <div class="card-footer">
-        <button>Apply filters</button>
+        <button (click)="applyFilters()">Apply filters</button>
     </div>
 </div>

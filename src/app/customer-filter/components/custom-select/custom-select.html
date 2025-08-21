@@ -3,15 +3,27 @@
     <span>▾</span>
     @if (open) {
         <div class="panel" (click)="$event.stopPropagation()">
+
             <div class="panel-header">
-                @if (!!searchTag) {
-                    <span class="search-tag">{{ searchTag }}</span>
+                @if (variant === 'operator') {
+                    <div class="tabs">
+                        <button type="button" [class.active]="tab==='string'"
+                                (click)="$event.stopPropagation(); switchToTab('string')">T STRING
+                        </button>
+                        <button type="button" [class.active]="tab==='number'"
+                                (click)="$event.stopPropagation(); switchToTab('number')"># NUMBER
+                        </button>
+                    </div>
+                } @else {
+                    @if (searchTag) {
+                        <span class="search-tag">{{ searchTag }}</span>
+                    }
+                    <input [(ngModel)]="searchInput" class="search-input" placeholder="Filter events...">
                 }
-                <input [(ngModel)]="searchInput" class="search-input" type="text" placeholder="Filter events...">
             </div>
             <ul>
-                @for (opt of options | search: searchInput; track opt) {
-                    <li class="option" (click)="choose(opt)">{{ opt }}</li>
+                @for (option of options | search: searchInput; track tab + '|' + option) {
+                    <li class="option" (click)="choose(option)">{{ option }}</li>
                 }
             </ul>
         </div>

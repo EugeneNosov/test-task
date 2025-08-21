@@ -10,7 +10,7 @@ import { SearchPipe } from './pipes/search-pipe';
   declarations: [
     CustomerFilter,
     CustomSelect,
-    SearchPipe
+    SearchPipe,
   ],
   exports: [
     CustomerFilter
