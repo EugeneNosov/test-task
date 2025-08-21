@@ -1,0 +1,19 @@
+<div class="select" (click)="toggle()">
+    <span>{{ selected ?? placeholder }}</span>
+    <span>▾</span>
+    @if (open) {
+        <div class="panel" (click)="$event.stopPropagation()">
+            <div class="panel-header">
+                @if (!!searchTag) {
+                    <span class="search-tag">{{ searchTag }}</span>
+                }
+                <input [(ngModel)]="searchInput" class="search-input" type="text" placeholder="Filter events...">
+            </div>
+            <ul>
+                @for (opt of options | search: searchInput; track opt) {
+                    <li class="option" (click)="choose(opt)">{{ opt }}</li>
+                }
+            </ul>
+        </div>
+    }
+</div>

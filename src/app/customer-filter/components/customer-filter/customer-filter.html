@@ -1,10 +1,38 @@
 <div class="card">
     <div class="card-header">
         <span>Customer filter</span>
-        <button>Discard filters</button>
+        <button (click)="discardFilters()">Discard filters</button>
     </div>
     <div class="card-body">
-        filters here
+        <form [formGroup]="funnelStepsForm">
+            <div formArrayName="steps">
+                @for (step of formSteps.controls; track step; let stepIndex = $index) {
+                    @let eventElement = formSteps.at(stepIndex).get('event');
+                    @let propertyElement = formSteps.at(stepIndex).get('property');
+
+                    <span>{{ stepIndex + 1 }} Step: {{ eventElement?.value ?? 'Unnamed step' }}</span>
+                    <div [formGroupName]="stepIndex">
+                        <app-custom-select placeholder="Select an event" formControlName="event" [options]="getEvents()"></app-custom-select>
+                        @if (eventElement?.value && propertyElement?.disabled) {
+                            <button type="button" (click)="showProperty(stepIndex)">
+                                +Add an event attribute
+                            </button>
+                        }
+
+                        @if (propertyElement?.enabled) {
+                            <app-custom-select
+                                    placeholder="Select an attribute"
+                                    [searchTag]="eventElement?.value"
+                                    formControlName="property"
+                                    [options]="getProperties(eventElement?.value)">
+                            </app-custom-select>
+                        }
+
+                    </div>
+                }
+            </div>
+            <button type="button" (click)="addNewStep()">+Add funnel step</button>
+        </form>
     </div>
     <div class="card-footer">
         <button>Apply filters</button>
