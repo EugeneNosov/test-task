@@ -89,7 +89,20 @@ export class CustomerFilter implements OnInit {
   }
 
   public applyFilters(): void {
-    console.log('Apply filters ===> ', this.funnelStepsForm);
+
+    const raw = this.funnelStepsForm.getRawValue() as {
+      steps: Array<{
+        event: string | null;
+        properties: Array<{
+          property: string | null;
+          operators: string | null;
+          operatorStringValue?: string | null;
+          operatorStartValue?: number | string | null;
+          operatorEndValue?: number | string | null;
+        }>;
+      }>;
+    };
+    console.log('Apply filters ===> ', raw);
   }
 
   private createStepsForm() {
